@@ -7,31 +7,28 @@ import me.test.util.debug.CountTime;
 
 public class SynchronizedOverheadTest17 {
 
-	private static int TEST_SIZE = 100000000;
+	private final static int TEST_SIZE = 1000000000;
 	
+	private final static int THREADS = 1;
+		
 	private final AtomicBoolean lock = new AtomicBoolean(false);
 	
 	
 	private boolean flag = false;
 	
-	private void test() {
-		
-		while (lock.compareAndSet(false, true)) {
-		}
+	private synchronized void test() {
 		
 		if (flag == false) {
 			flag = true;
 		}
-		
-		while (lock.compareAndSet(true, false)) {
-		}
+
 	}
 	
 	public static void main(String[] args) {
 		
 		final SynchronizedOverheadTest17 test = new SynchronizedOverheadTest17();
 				
-		ParallelRunner.run(8, new Runnable() {
+		ParallelRunner.run(THREADS, new Runnable() {
 
 			public void run() {
 				

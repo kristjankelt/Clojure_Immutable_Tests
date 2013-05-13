@@ -8,7 +8,7 @@ public class CacheCoherency02 {
 	
 	private static int TEST_SIZE = 1000000000;
 	
-	private static int THREADS = 2;
+	private static int THREADS = 4;
 
 	public static void main(String[] args) {
 		

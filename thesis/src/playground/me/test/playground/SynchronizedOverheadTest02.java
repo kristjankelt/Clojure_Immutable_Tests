@@ -4,7 +4,7 @@ import me.test.util.debug.CountTime;
 
 public class SynchronizedOverheadTest02 {
 
-	private static int TEST_SIZE = 100000000;
+	private static int TEST_SIZE = 10000000;
 	
 	private boolean flag;
 	

@@ -6,7 +6,7 @@ public class ObjectCreationOverhead01 {
 	
 	private static int TEST_SIZE = 1000000000;
 	
-	private volatile int count = 0;
+	private int count = 0;
 	
 	private ObjectCreationOverhead01 increment() {
 		
