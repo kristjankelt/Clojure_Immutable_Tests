@@ -5,12 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import me.test.transactions.ClojureRef;
 import me.test.transactions.OptimisticRef;
 import me.test.transactions.OptimisticTransactionManager;
 
 public class NativeAtomicCollectionTest implements ConcurrentCollectionTest {
 
-	private final OptimisticRef<List<Integer>> listRef;
+	private OptimisticRef<List<Integer>> listRef;
+	
+	@Override
+	public void prepareTest(int initialSize) {
+		
+		List<Integer> list = new ArrayList<Integer>();
+		
+		for (int i=0; i < initialSize; i++) {
+			list.add(Integer.valueOf(i));
+		}
+		
+		this.listRef = new OptimisticRef<List<Integer>>(
+				list
+		);
+	}
 	
 	public String getGroupName() {
 		return "NativeOptimistic";
@@ -18,11 +33,7 @@ public class NativeAtomicCollectionTest implements ConcurrentCollectionTest {
 	
 	public NativeAtomicCollectionTest() {
 		
-		this.listRef = new OptimisticRef<List<Integer>>(
-				new ArrayList<Integer>(
-					Arrays.asList(0)	
-				)
-		);
+		
 	}
 	
 	public void addItem() {
@@ -44,6 +55,35 @@ public class NativeAtomicCollectionTest implements ConcurrentCollectionTest {
 
 	public List<Integer> getResult() {
 		return new ArrayList<Integer>(listRef.deref());
+	}
+
+	@Override
+	public long getSumOfFirstAndLast() {
+		List<Integer> list = listRef.deref();
+		
+		if (list.size() > 1) {
+			return 
+					(list.get(0)).longValue() +
+					(list.get(list.size()-1)).longValue();
+		}
+		else if  (list.size() > 0) {
+			return (list.get(0)).longValue();
+		}
+		else {
+			return 0;
+		}
+	}
+
+	@Override
+	public long getSum() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getSize() {
+		List<Integer> list = listRef.deref();
+		
+		return list.size();
 	}
 
 }

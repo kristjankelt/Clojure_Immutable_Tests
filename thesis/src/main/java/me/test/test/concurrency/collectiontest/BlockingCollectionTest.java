@@ -6,11 +6,26 @@ import java.util.concurrent.Callable;
 
 import me.test.transactions.BlockingRef;
 import me.test.transactions.BlockingTransactionManager;
+import me.test.transactions.ClojureRef;
 import clojure.lang.PersistentVector;
 
 public class BlockingCollectionTest implements ConcurrentCollectionTest {
 
-	private final BlockingRef<PersistentVector> listRef;
+	private BlockingRef<PersistentVector> listRef;
+	
+	@Override
+	public void prepareTest(int initialSize) {
+		
+		PersistentVector list = PersistentVector.EMPTY;
+		
+		for (int i=0; i < initialSize; i++) {
+			list = list.cons(Integer.valueOf(i));
+		}
+		
+		this.listRef = new BlockingRef<PersistentVector>(
+				list
+		);
+	}
 	
 	public String getGroupName() {
 		return "Blocking";
@@ -18,7 +33,6 @@ public class BlockingCollectionTest implements ConcurrentCollectionTest {
 	
 	public BlockingCollectionTest()  {
 		
-		this.listRef = new BlockingRef<PersistentVector>(PersistentVector.create(Integer.valueOf(0)));
 		
 	}
 	
@@ -42,5 +56,34 @@ public class BlockingCollectionTest implements ConcurrentCollectionTest {
 	@SuppressWarnings("unchecked")
 	public List<Integer> getResult() {
 		return new ArrayList<Integer>(listRef.deref());
+	}
+
+	@Override
+	public long getSumOfFirstAndLast() {
+		PersistentVector list = listRef.deref();
+		
+		if (list.size() > 1) {
+			return 
+					((Integer)list.get(0)).longValue() +
+					((Integer)list.get(list.size()-1)).longValue();
+		}
+		else if  (list.size() > 0) {
+			return ((Integer)list.get(0)).longValue();
+		}
+		else {
+			return 0;
+		}
+	}
+
+	@Override
+	public long getSum() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getSize() {
+		PersistentVector list = listRef.deref();
+		
+		return list.size();
 	}
 }

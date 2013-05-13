@@ -53,5 +53,27 @@ public class BlockingCounterTest implements CounterTest  {
 			}
 		});
 	}
+
+	@Override
+	public Long longCalculation(final int wastedCycles) {
+		
+		
+		return BlockingTransactionManager.transaction(new Callable<Long>() {
+
+			public Long call() {
+				long counter1value = 
+						counter.updateValue(counter.deref().longValue() + 1).longValue();
+				
+				long counter2value = 
+						counter2.updateValue(counter2.deref().longValue() - 1).longValue();
+						
+				ConcurrentTester.wasteTime(wastedCycles);
+				
+				return counter1value + counter2value;			
+			}
+			
+		});
+		
+	}
 	
 }

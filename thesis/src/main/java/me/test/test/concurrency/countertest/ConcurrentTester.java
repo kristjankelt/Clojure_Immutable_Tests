@@ -23,9 +23,16 @@ public class ConcurrentTester {
 					
 					add(new TestItem("congestedAdd1", test.getGroupName(), "concurrent", congestedAdd1(test)));
 					add(new TestItem("congestedAdd2", test.getGroupName(), "concurrent", congestedAdd2(test)));
+					add(new TestItem("congestedAdd0001", test.getGroupName(), "concurrent", congestedAddX(test, 1)));
+					add(new TestItem("congestedAdd0002", test.getGroupName(), "concurrent", congestedAddX(test, 2)));
+					add(new TestItem("congestedAdd0004", test.getGroupName(), "concurrent", congestedAddX(test, 4)));
+					add(new TestItem("congestedAdd0008", test.getGroupName(), "concurrent", congestedAddX(test, 8)));
+					add(new TestItem("congestedAdd0100", test.getGroupName(), "concurrent", congestedAddX(test, 100)));
+					add(new TestItem("congestedAdd1000", test.getGroupName(), "concurrent", congestedAddX(test, 1000)));
 					add(new TestItem("readWrite1", test.getGroupName(), "concurrent", readWrite1(test)));
 					add(new TestItem("readWrite2", test.getGroupName(), "concurrent", readWrite2(test)));
 					add(new TestItem("readWrite3", test.getGroupName(), "concurrent", readWrite3(test)));
+					add(new TestItem("slowCompute", test.getGroupName(), "concurrent", slowCompute(test)));
 					
 				}
 			});
@@ -68,6 +75,26 @@ public class ConcurrentTester {
 
 			public void run(final int testSize) {
 				ParallelRunner.run(2, new Runnable() {
+					public void run() {
+						for (int i=0; i < testSize; i++) {
+							test.increment(true);
+						}
+					}
+				});		
+			}
+			
+		};
+	}
+	
+	private Test congestedAddX(final CounterTest test, final int threadCount) {
+		return new Test() {
+			
+			public void prepare(final int testSize) {
+
+			}
+
+			public void run(final int testSize) {
+				ParallelRunner.run(threadCount, new Runnable() {
 					public void run() {
 						for (int i=0; i < testSize; i++) {
 							test.increment(true);
@@ -197,6 +224,34 @@ public class ConcurrentTester {
 			}
 			
 		};
+	}
+	
+	private Test slowCompute(final CounterTest test) {
+		return new Test() {
+			
+			public void prepare(final int testSize) {
+
+			}
+
+			public void run(final int testSize) {
+				ParallelRunner.run(2, new Runnable() {
+					public void run() {
+						for (int i=0; i < testSize; i++) {
+							test.longCalculation(100000000);
+						}
+					}
+				});		
+			}
+			
+		};
+	}
+	
+	public static void wasteTime(int wastedCycles) {
+		double k = 0;
+		for (int i=0; i < wastedCycles; i++) {
+			k++;
+		}
+		k = k + 0;
 	}
 	
 }

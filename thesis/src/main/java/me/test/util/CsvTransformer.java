@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class CsvTransformer {
 
@@ -73,7 +74,7 @@ public class CsvTransformer {
 	}
 
 	private static Map<String, int[]> findPartitions(List<String[]> csvFile) {
-		Map<String, int[]> partitions = new HashMap<String, int[]>();
+		Map<String, int[]> partitions = new TreeMap<String, int[]>();
 		
 		if (csvFile.size() > 1) {
 			int previousLineIndex = 0;

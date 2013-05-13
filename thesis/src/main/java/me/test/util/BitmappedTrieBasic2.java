@@ -147,8 +147,14 @@ public class BitmappedTrieBasic2<E> {
 	
 	public BitmappedTrieBasic2<E> addElement(E e) {
 		
-		boolean duplicate = !stale.get() && !stale.compareAndSet(false, true);
-		return new BitmappedTrieBasic2<E>(data, tail, tailIndex, level, index, duplicate, e);
+		//boolean duplicate = !stale.get() && !stale.compareAndSet(false, true);
+		
+		if (stale.getAndSet(true)) {
+			return new BitmappedTrieBasic2<E>(data, tail, tailIndex, level, index, true, e);
+		}
+		else {
+			return new BitmappedTrieBasic2<E>(data, tail, tailIndex, level, index, false, e);
+		}
 
 	}
 	

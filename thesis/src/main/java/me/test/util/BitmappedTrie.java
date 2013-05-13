@@ -372,9 +372,14 @@ public class BitmappedTrie<E> {
 		
 //		return new BitmappedTrie<E>(data, tail, tailIndex, level, index, true, canShareData, e);
 		
-		boolean duplicate = !stale.get() && !stale.compareAndSet(false, true);
+		//boolean duplicate = !stale.get() && !stale.compareAndSet(false, true);
 		
-		return new BitmappedTrie<E>(data, tail, tailIndex, level, index, duplicate, canShareData, e);
+		if (stale.getAndSet(true)) {
+			return new BitmappedTrie<E>(data, tail, tailIndex, level, index, true, canShareData, e);
+		}
+		else {
+			return new BitmappedTrie<E>(data, tail, tailIndex, level, index, false, canShareData, e);
+		}
 
 	}
 	

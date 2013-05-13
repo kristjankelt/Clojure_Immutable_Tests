@@ -7,7 +7,19 @@ import java.util.List;
 
 public class SynchronizeCollectionTest implements ConcurrentCollectionTest {
 
-	private final List<Integer> list;
+	private List<Integer> list;
+	
+	@Override
+	public void prepareTest(int initialSize) {
+		
+		List<Integer> newList = new ArrayList<Integer>();
+		
+		for (int i=0; i < initialSize; i++) {
+			newList.add(Integer.valueOf(i));
+		}
+		
+		this.list = Collections.synchronizedList(newList);
+	}
 	
 	public String getGroupName() {
 		return "Synchronized";
@@ -15,16 +27,12 @@ public class SynchronizeCollectionTest implements ConcurrentCollectionTest {
 	
 	public SynchronizeCollectionTest()  {
 		
-		this.list = Collections.synchronizedList(new ArrayList<Integer>(
-				new ArrayList<Integer>(
-						Arrays.asList(0)	
-				)
-		));
+		
 	}
 	
 	public void addItem() {
 		
-		synchronized (list) {
+		synchronized (this) {
 			list.add(list.get(list.size()-1).intValue() + 1);
 		}
 		
@@ -32,7 +40,48 @@ public class SynchronizeCollectionTest implements ConcurrentCollectionTest {
 
 	
 	public List<Integer> getResult() {
-		return new ArrayList<Integer>(list);
+		synchronized (this) {
+			return new ArrayList<Integer>(list);
+		}
+	}
+
+	@Override
+	public long getSumOfFirstAndLast() {
+		synchronized (list) {
+			if (list.size() > 1) {
+				return 
+						(list.get(0)).longValue() +
+						(list.get(list.size()-1)).longValue();
+			}
+			else if  (list.size() > 0) {
+				return (list.get(0)).longValue();
+			}
+			else {
+				return 0;
+			}
+		}
+	}
+	
+	@Override
+	public synchronized long getSum() {
+
+		synchronized (list) {
+			long sum = 0;
+			
+			for (Integer item : list) {
+				sum += item.intValue();
+			}
+			
+			return sum;
+		}
+		
+	}
+
+	@Override
+	public int getSize() {
+		synchronized (list) {
+			return list.size();
+		}
 	}
 
 	

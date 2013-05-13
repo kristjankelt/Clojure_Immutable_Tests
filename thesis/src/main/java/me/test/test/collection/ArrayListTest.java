@@ -60,11 +60,16 @@ public final class ArrayListTest<E> implements CollectionTest<E>  {
 		
 		return list.get(index);
 	}
+	
+	public void changeElement(int index, E element) {
+		
+		list.set(index, element);
+	}
+	
 
 	public void calculateSize() {
 		@SuppressWarnings("unused")
 		int size = list.size();
-		//System.out.println(size);
 	}
 
 	public Iterable<E> iterable(int testSize) {
@@ -91,5 +96,6 @@ public final class ArrayListTest<E> implements CollectionTest<E>  {
 	public void readSafeLimit(int testSize) {
 		
 	}
+
 	
 }

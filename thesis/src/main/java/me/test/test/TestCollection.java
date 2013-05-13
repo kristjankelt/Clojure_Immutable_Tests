@@ -7,18 +7,29 @@ import java.util.Scanner;
 import java.util.Set;
  
 import me.test.test.collection.ArrayListTest;
+import me.test.test.collection.BitmappedTrieTestO2;
 import me.test.test.collection.BitmappedTrieTest2;
-import me.test.test.collection.BitmappedTrieTest3;
+import me.test.test.collection.BitmappedTrieTestO4;
+import me.test.test.collection.BitmappedTrieTestO5;
+import me.test.test.collection.BitmappedTrieTest1;
+import me.test.test.collection.BitmappedTrieTest64;
 import me.test.test.collection.BitmappedTrieTest4;
 import me.test.test.collection.BitmappedTrieTest5;
 import me.test.test.collection.FastArrayListTest;
 import me.test.test.collection.CollectionTester;
-import me.test.test.collection.BitmappedTrieTest;
+import me.test.test.collection.BitmappedTrieTest3;
 import me.test.test.collection.FnJavaListTest2;
+import me.test.test.collection.HashMapTest;
 import me.test.test.collection.ImmutableArrayListTest;
 import me.test.test.collection.ImmutableArrayListTest2;
 import me.test.test.collection.ImmutableListTest2;
-import me.test.test.collection.PersistentVectorTest2;
+import me.test.test.collection.LinkedListTest;
+import me.test.test.collection.PersistentHashMapTest;
+import me.test.test.collection.PersistentListTest;
+import me.test.test.collection.PersistentQueueTest;
+import me.test.test.collection.PersistentTreeMapTest;
+import me.test.test.collection.PersistentVectorTest;
+import me.test.test.collection.TreeMapTest;
 import me.test.test.collection.TreePVectorTest2;
 import me.test.test.concurrency.collectiontest.AtomicCollectionTest;
 import me.test.test.concurrency.collectiontest.BlockingCollectionTest;
@@ -28,6 +39,8 @@ import me.test.test.concurrency.collectiontest.NativeAtomicCollectionTest;
 import me.test.test.concurrency.collectiontest.NativeClojureCollectionTest;
 import me.test.test.concurrency.collectiontest.NativeOptimisticCollectionTest;
 import me.test.test.concurrency.collectiontest.OptimisticBitmappedTrieTest;
+import me.test.test.concurrency.collectiontest.OptimisticBitmappedTrieTest2;
+import me.test.test.concurrency.collectiontest.OptimisticBitmappedTrieTest3;
 import me.test.test.concurrency.collectiontest.OptimisticCollectionTest;
 import me.test.test.concurrency.collectiontest.OptimisticCollectionTest2;
 import me.test.test.concurrency.collectiontest.SynchronizeCollectionTest;
@@ -76,38 +89,54 @@ public class TestCollection {
 				addTests(this, (new LockTester()).getTests(CasLockTest.class));
 				addTests(this, (new LockTester()).getTests(CasLockTest2.class));
 				
-				
-				//addTests(this, (new CollectionTester()).getTests(FnJavaListTest2.class));
 				addTests(this, (new CollectionTester()).getTests(ArrayListTest.class));
-				//addTests(this, (new CollectionTester()).getTests(ImmutableListTest2.class));
-				//addTests(this, (new CollectionTester()).getTests(TreePVectorTest2.class));
-				addTests(this, (new CollectionTester()).getTests(PersistentVectorTest2.class));
-				addTests(this, (new CollectionTester()).getTests(FastArrayListTest.class));
-				addTests(this, (new CollectionTester()).getTests(BitmappedTrieTest.class));
+				addTests(this, (new CollectionTester()).getTests(LinkedListTest.class));
+				addTests(this, (new CollectionTester()).getTests(HashMapTest.class));
+				addTests(this, (new CollectionTester()).getTests(TreeMapTest.class));
+				
+				addTests(this, (new CollectionTester()).getTests(PersistentVectorTest.class));
+				addTests(this, (new CollectionTester()).getTests(PersistentListTest.class));
+				addTests(this, (new CollectionTester()).getTests(PersistentQueueTest.class));
+				addTests(this, (new CollectionTester()).getTests(PersistentHashMapTest.class));
+				
+//				addTests(this, (new CollectionTester()).getTests(PersistentTreeMapTest.class));
+				
+				addTests(this, (new CollectionTester()).getTests(FastArrayListTest.class));				
+				
+				addTests(this, (new CollectionTester()).getTests(BitmappedTrieTest1.class));
 				addTests(this, (new CollectionTester()).getTests(BitmappedTrieTest2.class));
 				addTests(this, (new CollectionTester()).getTests(BitmappedTrieTest3.class));
 				addTests(this, (new CollectionTester()).getTests(BitmappedTrieTest4.class));
 				addTests(this, (new CollectionTester()).getTests(BitmappedTrieTest5.class));
-				addTests(this, (new CollectionTester()).getTests(ImmutableArrayListTest.class));
-				addTests(this, (new CollectionTester()).getTests(ImmutableArrayListTest2.class));
 				
-				addTests(this, (new ConcurrentCollectionTester()).getTests(BlockingCollectionTest.class));
+				
+//				addTests(this, (new CollectionTester()).getTests(ImmutableArrayListTest.class));
+//				addTests(this, (new CollectionTester()).getTests(ImmutableArrayListTest2.class));
+//				addTests(this, (new CollectionTester()).getTests(FnJavaListTest2.class));
+//				addTests(this, (new CollectionTester()).getTests(ImmutableListTest2.class));
+//				addTests(this, (new CollectionTester()).getTests(TreePVectorTest2.class));				
+				
+				
+//				addTests(this, (new ConcurrentCollectionTester()).getTests(BlockingCollectionTest.class));
+//				addTests(this, (new ConcurrentCollectionTester()).getTests(NativeClojureCollectionTest.class));
+//				addTests(this, (new ConcurrentCollectionTester()).getTests(NativeOptimisticCollectionTest.class));
+//				addTests(this, (new ConcurrentCollectionTester()).getTests(NativeAtomicCollectionTest.class));
+//				addTests(this, (new ConcurrentCollectionTester()).getTests(OptimisticCollectionTest2.class));
+
 				addTests(this, (new ConcurrentCollectionTester()).getTests(ClojureSTMCollectionTest.class));
-				addTests(this, (new ConcurrentCollectionTester()).getTests(NativeClojureCollectionTest.class));
-				addTests(this, (new ConcurrentCollectionTester()).getTests(NativeOptimisticCollectionTest.class));
-				addTests(this, (new ConcurrentCollectionTester()).getTests(NativeAtomicCollectionTest.class));
 				addTests(this, (new ConcurrentCollectionTester()).getTests(OptimisticCollectionTest.class));
-				addTests(this, (new ConcurrentCollectionTester()).getTests(OptimisticCollectionTest2.class));
 				addTests(this, (new ConcurrentCollectionTester()).getTests(SynchronizeCollectionTest.class));
 				addTests(this, (new ConcurrentCollectionTester()).getTests(SynchronizeCollectionTest2.class));
 				addTests(this, (new ConcurrentCollectionTester()).getTests(SynchronizeCollectionTest3.class));
 				addTests(this, (new ConcurrentCollectionTester()).getTests(AtomicCollectionTest.class));
 				addTests(this, (new ConcurrentCollectionTester()).getTests(OptimisticBitmappedTrieTest.class));
+				addTests(this, (new ConcurrentCollectionTester()).getTests(OptimisticBitmappedTrieTest2.class));
+				addTests(this, (new ConcurrentCollectionTester()).getTests(OptimisticBitmappedTrieTest3.class));
 				
 			
 				addTests(this, (new ConcurrentTester()).getTests(AtomicCounterTest.class));
 				addTests(this, (new ConcurrentTester()).getTests(AtomicCounterTest2.class));
-				addTests(this, (new ConcurrentTester()).getTests(BlockingCounterTest.class));
+				//addTests(this, (new ConcurrentTester()).getTests(BlockingCounterTest.class));
 				addTests(this, (new ConcurrentTester()).getTests(ClojureSTMCounterTest.class));
 				addTests(this, (new ConcurrentTester()).getTests(OptimisticCounterTest.class));
 				addTests(this, (new ConcurrentTester()).getTests(OptimisticCounterTest2.class));

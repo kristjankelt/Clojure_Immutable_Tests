@@ -1,9 +1,10 @@
 package me.test.test.collection;
 
+import clojure.lang.IPersistentCollection;
 import clojure.lang.ITransientVector;
 import clojure.lang.PersistentVector;
 
-public final class PersistentVectorTest2<E> implements CollectionTest<E>  {
+public final class PersistentVectorTest<E> implements CollectionTest<E>  {
 
 	public String groupName() {
 		return "clojure.lang.PersistentVector";
@@ -39,7 +40,7 @@ public final class PersistentVectorTest2<E> implements CollectionTest<E>  {
 		}
 		
 	}
-
+	
 	public void fastFill(int testSize) {
 		ITransientVector list = PersistentVector.EMPTY.asTransient();
 		
@@ -48,8 +49,8 @@ public final class PersistentVectorTest2<E> implements CollectionTest<E>  {
 			list = (ITransientVector) list.conj(Integer.valueOf(0));
 		}
 		
-//		@SuppressWarnings("unused")
-//		IPersistentCollection persistentList = list.persistent();
+		@SuppressWarnings("unused")
+		IPersistentCollection persistentList = list.persistent();
 
 	}
 
@@ -60,6 +61,11 @@ public final class PersistentVectorTest2<E> implements CollectionTest<E>  {
 	@SuppressWarnings("unchecked")
 	public E readElement(int index) {
 		return (E)list.nth(index);
+	}
+	
+
+	public void changeElement(int index, E element) {
+		list = list.assocN(index, element);
 	}
 
 	public void calculateSize() {
@@ -90,5 +96,5 @@ public final class PersistentVectorTest2<E> implements CollectionTest<E>  {
 	public void readSafeLimit(int testSize) {
 		
 	}
-	
+
 }

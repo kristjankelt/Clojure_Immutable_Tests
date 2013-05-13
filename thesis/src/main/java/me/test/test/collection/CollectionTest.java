@@ -20,6 +20,8 @@ public interface CollectionTest<E> {
 
 	public void addElement(E element);
 	
+	public void changeElement(int index, E element);
+	
 	public E readElement(int index);
 	
 	public void calculateSize();

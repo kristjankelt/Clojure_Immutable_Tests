@@ -5,17 +5,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CasLockTest implements LockTest {
 	
-	private static CasLock NULL_LOCK;
+	private static CasLock NULL_LOCK = new CasLock(0);
 	
-	{
-		if (NULL_LOCK == null) {
-			synchronized (CasLock.class) {
-				if (NULL_LOCK == null) {
-					NULL_LOCK = new CasLock(0);
-				}
-			}
-		}
-	}
+//	{
+//		if (NULL_LOCK == null) {
+//			synchronized (CasLock.class) {
+//				if (NULL_LOCK == null) {
+//					NULL_LOCK = new CasLock(0);
+//				}
+//			}
+//		}
+//	}
 	
 	private static class CasLock {
 		private final int id;
@@ -29,7 +29,7 @@ public class CasLockTest implements LockTest {
 	}
 
 	
-	private final AtomicReference<CasLock> lockHolder = 
+	private AtomicReference<CasLock> lockHolder = 
 								new AtomicReference<CasLock>(NULL_LOCK);
 	
 	private final Integer id;

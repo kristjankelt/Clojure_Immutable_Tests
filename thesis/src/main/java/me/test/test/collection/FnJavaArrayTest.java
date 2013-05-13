@@ -91,5 +91,8 @@ public final class FnJavaArrayTest<E> implements CollectionTest<E>  {
 			throw new TooBigTestSizeException();
 		}
 	}
-	
+
+	public void changeElement(int index, E element) {
+		throw new UnsupportedOperationException();
+	}
 }

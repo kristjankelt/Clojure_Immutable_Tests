@@ -56,5 +56,30 @@ public class ReadWriteLockCounterTest implements CounterTest  {
 		}
 		
 	}
+
+	@Override
+	public Long longCalculation(final int wastedCycles) {
+		
+		lock.writeLock().lock();
+		
+		try {
+			long counter1value = 0L;
+			long counter2value = 0L;
+			
+			counter1value = counter.longValue() + 1L;
+			counter2value = counter2.longValue() - 1L;
+			
+			counter = Long.valueOf(counter1value);
+			counter2 = Long.valueOf(counter2value);
+			
+			ConcurrentTester.wasteTime(wastedCycles);
+			
+		
+			return counter1value + counter2value;
+		}
+		finally {
+			lock.writeLock().unlock();
+		}
+	}
 	
 }

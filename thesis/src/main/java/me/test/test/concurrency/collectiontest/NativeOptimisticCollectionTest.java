@@ -5,9 +5,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import clojure.lang.PersistentVector;
+
+import me.test.transactions.OptimisticRef2;
+import me.test.util.BitmappedTrieOld2;
+
 public class NativeOptimisticCollectionTest implements ConcurrentCollectionTest {
 
-	private final AtomicReference<List<Integer>> listRef;
+	private AtomicReference<List<Integer>> listRef;
+	
+	@Override
+	public void prepareTest(int initialSize) {
+		
+		
+		List<Integer> list = new ArrayList<Integer>();
+			
+		for (int i=0; i < initialSize; i++) {
+			list.add(Integer.valueOf(i));
+		}
+		
+		this.listRef = new AtomicReference<List<Integer>>(
+				list
+		);
+	}
 	
 	public String getGroupName() {
 		return "NativeAtomic";
@@ -15,11 +35,7 @@ public class NativeOptimisticCollectionTest implements ConcurrentCollectionTest 
 	
 	public NativeOptimisticCollectionTest() {
 		
-		this.listRef = new AtomicReference<List<Integer>>(
-				new ArrayList<Integer>(
-					Arrays.asList(0)	
-				)
-		);
+		
 	}
 	
 	@SuppressWarnings("serial")
@@ -41,6 +57,36 @@ public class NativeOptimisticCollectionTest implements ConcurrentCollectionTest 
 
 	public List<Integer> getResult() {
 		return new ArrayList<Integer>(listRef.get());
+	}
+
+	@Override
+	public long getSumOfFirstAndLast() {
+		
+		List<Integer> list = listRef.get();
+		
+		if (list.size() > 1) {
+			return 
+					(list.get(0)).longValue() +
+					(list.get(list.size()-1)).longValue();
+		}
+		else if  (list.size() > 0) {
+			return (list.get(0)).longValue();
+		}
+		else {
+			return 0;
+		}
+	}
+
+	@Override
+	public long getSum() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getSize() {
+		List<Integer> list = listRef.get();
+		
+		return list.size();
 	}
 
 }

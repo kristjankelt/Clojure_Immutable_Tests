@@ -43,6 +43,9 @@ public final class CommandLineExecutor {
 					.withDescription("Prints this help.")
 					.create("help"))
 			.addOption(OptionBuilder
+					.withDescription("Prints system info.")
+					.create("info"))
+			.addOption(OptionBuilder
 					.withDescription("Prints list of all available tests.")
 					.create("list"))
 			.addOption(OptionBuilder
@@ -53,6 +56,7 @@ public final class CommandLineExecutor {
 					.withDescription("Used in colloboration with RUN and GENERATE command to turn on optional csv " + 
 										"(comma separated values) file format output.")
 					.create("csv"))
+			
 			.addOption(OptionBuilder
 					.withArgName("testSizeFrom")
 					.hasArg()
@@ -94,7 +98,12 @@ public final class CommandLineExecutor {
 					.hasArg()
 					.withDescription("Used in colloboration with RUN and GENERATE command to specify the count of test executions. " + 
 										"Optional, default value is " + TEST_REPEAT_COUNT_DEFAULT + ".")
-					.create("count"));
+					.create("count"))
+			.addOption(OptionBuilder
+					.withArgName("token")
+					.hasArg()
+					.withDescription("Addes token to the end of test id in the output.")
+					.create("token"));
 		
 	}
 	
@@ -129,6 +138,9 @@ public final class CommandLineExecutor {
 	        else if (commandLine.hasOption("list")) {
 	        	listTests.call();
 	        }
+	        else if (commandLine.hasOption("info")) {
+	        	System.out.println("Processor core count: " + Runtime.getRuntime().availableProcessors());
+	        }
 	        else if (commandLine.getArgList().size() < 1) {
 	        	printUsage();
 	        }
@@ -160,7 +172,8 @@ public final class CommandLineExecutor {
 		        				commandLine.hasOption("size") ? Integer.valueOf(commandLine.getOptionValue("size")).intValue() : TEST_SIZE_DEFAULT,
 		        				commandLine.hasOption("count") ? Integer.valueOf(commandLine.getOptionValue("count")).intValue() : TEST_REPEAT_COUNT_DEFAULT,
 		        				commandLine.hasOption("csv"),
-		        				commandLine.hasOption("profiling")
+		        				commandLine.hasOption("profiling"),
+		        				commandLine.hasOption("token") ? commandLine.getOptionValue("token") : null
 		        		);
 	        		}
 	        		break;
@@ -171,7 +184,7 @@ public final class CommandLineExecutor {
 	        		else if (commandLine.hasOption("sizeTo") && !isInteger(commandLine.getOptionValue("sizeTo"))) {
 	        			printMessageWithUsage("Please specify valid numeric value for option sizeTo.");
 	        		}
-	        		else if (commandLine.hasOption("sizeStep") && !isInteger(commandLine.getOptionValue("sizeStep"))) {
+	        		else if (commandLine.hasOption("sizeStep") && !isDouble(commandLine.getOptionValue("sizeStep"))) {
 	        			printMessageWithUsage("Please specify valid numeric value for option sizeStep.");
 	        		}
 	        		else if (commandLine.hasOption("count") && !isInteger(commandLine.getOptionValue("count"))) {
@@ -181,10 +194,11 @@ public final class CommandLineExecutor {
 	        			generateTests.call(
 	        					commandLine.hasOption("sizeFrom") ? Integer.valueOf(commandLine.getOptionValue("sizeFrom")).intValue() : TEST_SIZE_FROM_DEFAULT,
 	        					commandLine.hasOption("sizeTo") ? Integer.valueOf(commandLine.getOptionValue("sizeTo")).intValue() : TEST_SIZE_TO_DEFAULT,
-       							commandLine.hasOption("sizeStep") ? Integer.valueOf(commandLine.getOptionValue("sizeStep")).intValue() : TEST_SIZE_STEP_DEFAULT,
+       							commandLine.hasOption("sizeStep") ? Double.valueOf(commandLine.getOptionValue("sizeStep")).doubleValue() : TEST_SIZE_STEP_DEFAULT,
        							commandLine.hasOption("count") ? Integer.valueOf(commandLine.getOptionValue("count")).intValue() : TEST_REPEAT_COUNT_DEFAULT,
        							commandLine.hasOption("csv"),
-       							commandLine.hasOption("multiply")
+       							commandLine.hasOption("multiply"),
+       							commandLine.hasOption("token") ? commandLine.getOptionValue("token") : null
 	        			);
 		        		
 	        		}
@@ -219,6 +233,17 @@ public final class CommandLineExecutor {
 		
 		try {
 			Integer.valueOf(value);
+			return true;
+		}
+		catch (NumberFormatException e) {
+			return false;
+		}
+	}
+	
+	private static boolean isDouble(String value) {
+		
+		try {
+			Double.valueOf(value);
 			return true;
 		}
 		catch (NumberFormatException e) {

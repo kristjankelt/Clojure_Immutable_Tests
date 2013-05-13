@@ -16,7 +16,7 @@ public final class OptimisticRef<E> implements Ref<E>, Comparable<OptimisticRef<
 	
     private Integer id = Integer.valueOf(uniqueId.getAndIncrement());
     
-	private E value;
+	private volatile E value;
 	
 	private final Lock commitLock = new ReentrantLock();
 	

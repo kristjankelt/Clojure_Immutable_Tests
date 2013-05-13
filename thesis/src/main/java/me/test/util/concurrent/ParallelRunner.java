@@ -3,11 +3,51 @@ package me.test.util.concurrent;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import me.test.transactions.IdRunnable;
 import me.test.transactions.ParameterRunnable;
 
 public class ParallelRunner {
+	
+	private static final ThreadLocal<ExecutorService> service = new ThreadLocal<ExecutorService>();
+	
+	// Experimental
+	public static void run(final Runnable runnable) {
+
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable can not be null.");
+		}
+		
+		if (service.get() == null) {
+			service.set(Executors.newFixedThreadPool(
+					Runtime.getRuntime().availableProcessors()));
+		}
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		service.get().execute(new Runnable() {
+
+			public void run() {
+				try {
+					runnable.run();
+				}
+				finally {
+					latch.countDown();
+				}
+			}
+			
+		});
+		
+		
+		//service.get().shutdown();
+		
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	public static void run(final int parallelism, final IdRunnable runnable) {
 		
@@ -16,9 +56,6 @@ public class ParallelRunner {
 		}
 		
 		ExecutorService service = Executors.newFixedThreadPool(parallelism);
-		
-		final CountDownLatch latch = new CountDownLatch(parallelism);
-		
 
 		for (int i=0; i< parallelism; i++) {
 			
@@ -27,11 +64,93 @@ public class ParallelRunner {
 			service.execute(new Runnable() {
 
 				public void run() {
-					try {
+					runnable.run(id);
+				}
+				
+			});
+		}
+		
+		service.shutdown();
+		
+		while (!service.isShutdown()) {
+			try {
+				service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				throw new IllegalStateException(e);
+			}
+		}	
+		
+	}
+	
+	public static void run2(final int parallelism, final IdRunnable runnable) {
+		
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable can not be null.");
+		}
+		
+		ExecutorService service = Executors.newFixedThreadPool(2);
+
+		for (int i=0; i< parallelism; i++) {
+			
+			final int id = i;
+			
+			service.execute(new Runnable() {
+
+				public void run() {
+					runnable.run(id);
+				}
+				
+			});
+		}
+		
+		service.shutdown();
+		
+		while (!service.isShutdown()) {
+			try {
+				service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				throw new IllegalStateException(e);
+			}
+		}	
+		
+	
+		
+	}
+	
+	public static void run3(final int parallelism, final IdRunnable runnable) {
+		
+		final int CPU_COUNT = 2;
+		
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable can not be null.");
+		}
+		
+		ExecutorService service = Executors.newFixedThreadPool(CPU_COUNT);
+		
+		final int[] splitsLower = new int[CPU_COUNT];
+		final int[] splitsUpper = new int[CPU_COUNT];
+		
+		for (int i=0; i < CPU_COUNT; i++) {
+			splitsLower[i] = i * parallelism / CPU_COUNT;
+			splitsUpper[i] = (i * parallelism / CPU_COUNT) + (parallelism / CPU_COUNT);
+		}
+
+		for (int i=0; i < CPU_COUNT; i++) {
+			
+			final int cpuId = i;
+			
+			service.execute(new Runnable() {
+
+				public void run() {
+					for (int i=splitsLower[cpuId]; i< splitsUpper[cpuId]; i++) {
+
+						final int id = i;
+						
 						runnable.run(id);
 					}
-					finally {
-						latch.countDown();
+					
+					if (splitsUpper[cpuId] + 1 == parallelism) {
+						runnable.run(parallelism - 1);
 					}
 				}
 				
@@ -40,11 +159,15 @@ public class ParallelRunner {
 		
 		service.shutdown();
 		
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		while (!service.isShutdown()) {
+			try {
+				service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				throw new IllegalStateException(e);
+			}
+		}	
+		
+	
 		
 	}
 
@@ -54,20 +177,21 @@ public class ParallelRunner {
 			throw new IllegalArgumentException("Runnable can not be null.");
 		}
 		
+		
 		ExecutorService service = Executors.newFixedThreadPool(parallelism);
 		
-		final CountDownLatch latch = new CountDownLatch(parallelism);
+		final CountDownLatch finishLatch = new CountDownLatch(parallelism);
 		
-
 		for (int i=0; i< parallelism; i++) {
 			service.execute(new Runnable() {
 
 				public void run() {
 					try {
+
 						runnable.run();
 					}
 					finally {
-						latch.countDown();
+						finishLatch.countDown();
 					}
 				}
 				
@@ -77,7 +201,7 @@ public class ParallelRunner {
 		service.shutdown();
 		
 		try {
-			latch.await();
+			finishLatch.await();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
@@ -85,7 +209,7 @@ public class ParallelRunner {
 	}
 	
 
-	public static <E> void run(final int parallelism, final ParameterRunnable<E> runnable, final E ... parameters) {
+	public static <E> void run(final int parallelism, final ParameterRunnable<E> runnable, @SuppressWarnings("unchecked") final E ... parameters) {
 		
 		if (runnable == null) {
 			throw new IllegalArgumentException("Runnable can not be null.");

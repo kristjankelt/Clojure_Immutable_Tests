@@ -63,6 +63,32 @@ public class ClojureSTMCounterTest implements CounterTest  {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public Long longCalculation(final int wastedCycles) {
+		
+		try {
+			return (Long) LockingTransaction.runInTransaction(new Callable<Long>() {
+
+				public Long call() {
+
+					long counter1value = 
+							counter.updateValue(counter.deref().longValue() + 1).longValue();
+					
+					long counter2value =  
+							counter2.updateValue(counter2.deref().longValue() - 1).longValue();
+					
+					ConcurrentTester.wasteTime(wastedCycles);
+					
+					return counter1value + counter2value;		
+							
+				}
+				
+			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 		
 	
 }

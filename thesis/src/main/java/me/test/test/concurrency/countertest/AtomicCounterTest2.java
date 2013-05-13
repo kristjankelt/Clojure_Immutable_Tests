@@ -44,5 +44,25 @@ public class AtomicCounterTest2 implements CounterTest  {
 			return counter.get()[0];
 		}
 	}
+
+	@Override
+	public Long longCalculation(int wastedCycles) {
+		
+		long[] currentValue = counter.get();
+		
+		while (!counter.compareAndSet(
+						currentValue, 
+						new long[] {
+								currentValue[0] + 1,
+								currentValue[1] - 1
+						})) {
+			
+			ConcurrentTester.wasteTime(wastedCycles);
+			
+			currentValue = counter.get();
+		}
+	
+		return currentValue[0] + currentValue[1];
+	}
 	
 }

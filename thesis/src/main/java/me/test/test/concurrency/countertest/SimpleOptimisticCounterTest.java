@@ -32,4 +32,18 @@ public class SimpleOptimisticCounterTest implements CounterTest {
 		return counter.deref();
 	}
 
+	@Override
+	public Long longCalculation(final int wastedCycles) {
+		
+		
+		return counter.updateValueOptimistically(new Passable<Long>() {
+			
+			public Long call(Long value) {
+				ConcurrentTester.wasteTime(wastedCycles);
+				
+				return Long.valueOf(value.longValue() + 1);
+			}
+		});
+	}
+
 }

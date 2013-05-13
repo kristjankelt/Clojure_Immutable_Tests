@@ -1,12 +1,10 @@
 package me.test.transactions;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-
-//import me.test.util.debug.StateDebuger;
-
 
 public class OptimisticTransactionManager2 {
 	
@@ -20,11 +18,11 @@ public class OptimisticTransactionManager2 {
 			throw new IllegalStateException("Nested transactions are not allowed");
 		}
 		
-//		StateDebuger.debug("START TRANSACTION");
+		//StateDebuger.debug("START TRANSACTION");
 		
 		isInTransaction.set(Boolean.TRUE);
 		
-		registeredRefs.set(new TreeMap<OptimisticRef2<?>, OptimisticRef2<?>>());
+		registeredRefs.set(new HashMap<OptimisticRef2<?>, OptimisticRef2<?>>());
 		
 		V returnValue = null; 
 		
@@ -36,16 +34,16 @@ public class OptimisticTransactionManager2 {
 				
 				Exception encounteredException = null;
 				
-//				StateDebuger.debug("TRY NR. " + tries);
+				//StateDebuger.debug("TRY NR. " + tries);
 				
 				try {
 					returnValue = transaction.call();
 					
 				} 
 				catch (DataChangedException e) {
-//					StateDebuger.debug("IN UPDATE RESET AND START OVER");
+					//StateDebuger.debug("IN UPDATE RESET AND START OVER");
 					reset();
-//					tries++;
+					tries++;
 					continue;
 				}
 				catch (Exception e) {
@@ -53,40 +51,41 @@ public class OptimisticTransactionManager2 {
 				}
 				
 				if (encounteredException != null) {
-//					StateDebuger.debug("EXCEPTION, START CLEAN UP");
+					//StateDebuger.debug("EXCEPTION, START CLEAN UP");
 					
 					clearAll();
 
 					//encounteredException.printStackTrace();
 					
-//					StateDebuger.debug("RETHROW EXCEPTION");
+					//StateDebuger.debug("RETHROW EXCEPTION");
 					
 					throw new RuntimeException(encounteredException);
 				}
 				else {
 					
-//					StateDebuger.debug("TRY COMMIT");
+					//StateDebuger.debug("TRY COMMIT");
 					if (tryCommit()) {
-//						StateDebuger.debug("FINISH COMMIT");
+						//StateDebuger.debug("FINISH COMMIT");
 						
 						break;
 					}
 					else {
-//						StateDebuger.debug("RESET AND START OVER");
+						//StateDebuger.debug("RESET AND START OVER");
 						reset();
-//						tries++;
+						tries++;
 						continue;
 					}
 				}
 			}
 		}
 		finally {
-//			StateDebuger.debug("CLEAN UP TRANSACTION");
+			//StateDebuger.debug("CLEAN UP TRANSACTION");
+			finish();
 			isInTransaction.set(null);
 			registeredRefs.set(null);
 		}
 		
-//		StateDebuger.debug("RETURN TRANSACTION value " + returnValue);
+		//StateDebuger.debug("RETURN TRANSACTION value " + returnValue);
 		
 		return returnValue;
 	}
@@ -98,21 +97,28 @@ public class OptimisticTransactionManager2 {
 		}
 	}
 
-//	private static void finish() {
-//		for (OptimisticRef2<?> ref : registeredRefs.get().keySet()) {
-//			ref.finish();
-//		}
-//	}
+	private static void finish() {
+		for (OptimisticRef2<?> ref : registeredRefs.get().keySet()) {
+			ref.finish();
+		}
+	}
 
 	private static boolean tryCommit() {
 		
 		final Iterator<OptimisticRef2<?>> iterator = registeredRefs.get().keySet().iterator();
 		
+		//StateDebuger.debug("TRY COMMIT TRANSACTION (tryCommit)");
+		
 		if (iterator.hasNext()) {
+			
+			//StateDebuger.debug("REFs found (tryCommit)");
+			
 			return iterator.next().tryCommit(iterator);
 			
 		}
 		else {
+			//StateDebuger.debug("REFs not found (tryCommit)");
+			
 			return true;
 		}
 		

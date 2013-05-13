@@ -174,7 +174,7 @@ public class LockTester {
 
 			public void run(final int testSize) {
 				
-				ParallelRunner.run(2, new Runnable() {
+				ParallelRunner.run(8, new Runnable() {
 					
 					public void run() {
 						for (LockTest lock : locks) {

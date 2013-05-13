@@ -17,12 +17,12 @@ public class TestRunner2 {
 				
 			new GenerateTests() {
 				
-				public void call(int sizeFrom, int sizeTo, int sizeStep, int repeatCount, 
-									boolean csv, boolean multiply) {
+				public void call(int sizeFrom, int sizeTo, double sizeStep, int repeatCount, 
+									boolean csv, boolean multiply, String token) {
 					
 					printAllTests(TestCollection.getAllTests(), 
 									sizeFrom, sizeTo, sizeStep, repeatCount, 
-									csv, multiply);
+									csv, multiply, token);
 				
 				}
 				
@@ -33,14 +33,15 @@ public class TestRunner2 {
 				public void call(String testId, 
 								int size, int repeatCount, 
 								boolean csv,
-								boolean profiling) {
+								boolean profiling, String token) {
 					
 					if (profiling) { waitForYes("Start profiling?"); }
 					
 					runTestById(TestCollection.getAllTests(), 
 								testId, 
 								size, repeatCount, 
-								csv);
+								csv,
+								token);
 					
 					if (profiling) { waitForYes("End profiling?"); }
 				}
@@ -64,8 +65,8 @@ public class TestRunner2 {
 	
 	private static void printAllTests(
 								final Map<String, TestContainer> tests, 
-								int testSizeFrom, int testSizeTo, int testSizeStep, int repeatCount,
-								boolean csv, boolean multiply) {
+								int testSizeFrom, int testSizeTo, double testSizeStep, int repeatCount,
+								boolean csv, boolean multiply, String token) {
 		for (String testId : tests.keySet()) {
 
 			for (int testSize = testSizeFrom; 
@@ -77,32 +78,44 @@ public class TestRunner2 {
 					options.append(" -csv");
 				}
 				
+				if (token != null) {
+					options.append(" -token " + token);
+				}
+				
+				// -Xss256m 
+				
 				Out.println("java -jar target/stmtest.jar RUN -size " + testSize + " -count " + repeatCount + " -testId " + testId + options.toString());
 			}
 		}
 	}
 	
-	private static int stepOperation(int oldValue, int step, boolean multiply) {
+	private static int stepOperation(int oldValue, double step, boolean multiply) {
 		if (multiply) {
-			return oldValue * step;
+			System.out.println("STEP "+ oldValue + " " + step);
+			return (int)(oldValue * step);
 		}
 		else {
-			return oldValue + step;
+			return (int)(oldValue + step);
 		}
 	}
 
 	private static void runTestById(
 								final Map<String, TestContainer> tests, String testId, 
 								int size, int repeatCount, 
-								boolean csv) {
+								boolean csv,
+								String token) {
 		
 		if (tests.containsKey(testId)) {
 
 			final TestContainer testContainer = tests.get(testId);
 			final Test test = testContainer.test();
 			
+			if (token != null) {
+				testId = testId + "#" + token;
+			}
+			
 			try {
-				test.prepare(size);
+				
 				
 				long time = runTest(test, size, repeatCount);
 			
@@ -150,6 +163,9 @@ public class TestRunner2 {
 		long totalRunTime = 0;
 		
 		for (int i = 0; i < runCount - 1; i++) { // WARM UP
+			
+			test.prepare(testSize);
+			
 			CountTime.run(new Runnable() {
 	
 				public void run() {
@@ -158,6 +174,8 @@ public class TestRunner2 {
 				
 			}, false);
 		}
+		
+		test.prepare(testSize);
 		
 		totalRunTime += CountTime.run(new Runnable() {
 			

@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 //import java.util.concurrent.locks.Lock;
 //import java.util.concurrent.locks.ReentrantLock;
 
@@ -38,7 +39,7 @@ public final class OptimisticRef2<E>  implements
 		if (OptimisticTransactionManager2.isInTransaction()) {
 			if (!isInTransaction()) {
 				
-//				debugState("deref() new Transaction");
+				//debugState("deref() new Transaction");
 				
 				setupTransaction(true);
 				
@@ -46,7 +47,7 @@ public final class OptimisticRef2<E>  implements
 				
 			}
 			else {
-//				debugState("deref() existing Transaction");
+				//debugState("deref() existing Transaction");
 			}
 		
 			return currentTransactionValue.get();
@@ -56,13 +57,13 @@ public final class OptimisticRef2<E>  implements
 		
 			if (!isInTransaction()) {
 			
-//				debugState("deref() not in transaction yet");
+				//debugState("deref() not in transaction yet");
 				
 				return value;
 				
 			}
 			else {
-//				debugState("deref() return value");
+				//debugState("deref() return value");
 				
 				return currentTransactionValue.get();
 			}
@@ -83,9 +84,11 @@ public final class OptimisticRef2<E>  implements
 			throw new RuntimeException("Ref accessed outside of the transaction.");
 		}
 		
+		//debugState("updateValue() " + newValue);
+		
 		if (!isInTransaction()) {
 	
-//			debugState("updateValue(" + newValue + ") new Transaction");
+			//debugState("updateValue(" + newValue + ") new Transaction");
 			
 			setupTransaction(true);
 			
@@ -93,7 +96,7 @@ public final class OptimisticRef2<E>  implements
 		}
 //		else {
 //			
-//			debugState("updateValue(" + newValue + ") existing Transaction");
+//			//debugState("updateValue(" + newValue + ") existing Transaction");
 //		}
 		
 //		if (stateChanged()) {
@@ -112,14 +115,14 @@ public final class OptimisticRef2<E>  implements
 			throw new IllegalStateException("");
 		}
 		
-//		debugState("reset() start");		
+		//debugState("reset() start");		
 		
 		//clear();
 		savedTransactionValue.set(null);
 		currentTransactionValue.set(null);
 		isInTransaction.set(null);
 		
-//		debugState("reset() end");
+		//debugState("reset() end");
 		
 //		if (isLocking.get() != null) {
 //			
@@ -136,13 +139,13 @@ public final class OptimisticRef2<E>  implements
 			throw new IllegalStateException("");
 		}
 		
-//		debugState("finish() start");
+		//debugState("finish() start");
 		
 //		value = currentTransactionValue.get();
 		
 		clear();
 		
-//		debugState("finish() end");
+		//debugState("finish() end");
 		
 //		if (isLocking.get() != null) {
 //			
@@ -186,29 +189,29 @@ public final class OptimisticRef2<E>  implements
 			throw new IllegalStateException("");
 		}
 		
-//		debugState("tryCommit() start");
+		//debugState("tryCommit() start");
 		
 		
 		
 		if (stateChanged()) {
-//			debugState("tryCommit() state changed");
+			//debugState("tryCommit() state changed");
 			return false;
 		}
 		else {
 			
 			if (iterator.hasNext()) {
-//				debugState("tryCommit() try next");
+				//debugState("tryCommit() try next");
 				
 				if (iterator.next().tryCommit(iterator)) {
 					
 					value = currentTransactionValue.get();
 					
-//					debugState("tryCommit() save value = " + currentTransactionValue.get());
+					//debugState("tryCommit() save value = " + currentTransactionValue.get());
 					
 					return true;
 				}
 				else {
-//					debugState("tryCommit() rollback");
+					//debugState("tryCommit() rollback");
 
 					return false;
 				}
@@ -216,7 +219,7 @@ public final class OptimisticRef2<E>  implements
 			else {
 				value = currentTransactionValue.get();
 				
-//				debugState("tryCommit() save value2 = " + currentTransactionValue.get());
+				//debugState("tryCommit() save value2 = " + currentTransactionValue.get());
 			
 				return true;
 			}
@@ -234,28 +237,28 @@ public final class OptimisticRef2<E>  implements
 //		
 //		isLocking.set(Boolean.TRUE);
 //		
-////		debugState("commit() start");
+////		//debugState("commit() start");
 //		
 //		
 //		if (stateChanged()) {
 //			return false;
 //		}
 //		
-////		debugState("commit() end");
+////		//debugState("commit() end");
 //		
 //		
 //		return true;
 //	}
 
 	protected void clear() {
-//		debugState("clear() start");
+		//debugState("clear() start");
 		
 		
 		savedTransactionValue.set(null);
 		currentTransactionValue.set(null);
 		isInTransaction.set(null);
 		
-//		debugState("clear() end");
+		//debugState("clear() end");
 		
 	}
 	
@@ -274,21 +277,21 @@ public final class OptimisticRef2<E>  implements
 		}
 		
 		if (value == null && savedValue == null) {
-//			debugState("stateChanged() is false: null == null");
+			//debugState("stateChanged() is false: null == null");
 			
 			return false;
 		}
 		
 		if (value != null && savedValue == null) {
 			
-//			debugState("stateChanged() is true: !null != null");
+			//debugState("stateChanged() is true: !null != null");
 			
 			return true;
 		}
 		
 		if (value == null && savedValue != null) {
 			
-//			debugState("stateChanged() is true: null != !null");
+			//debugState("stateChanged() is true: null != !null");
 			
 			return true;
 		}
@@ -297,12 +300,12 @@ public final class OptimisticRef2<E>  implements
 		//if (!value.equals(savedTransactionValue.get())) {
 		if (value != savedValue) {
 			
-//			debugState("stateChanged() is true: !null != !null");
+			//debugState("stateChanged() is true: !null != !null");
 			
 			return true;
 		}
 		
-//		debugState("stateChanged() is false: !null == !null");
+		//debugState("stateChanged() is false: !null == !null");
 		
 		// see optimization above
 		return false;
@@ -319,7 +322,7 @@ public final class OptimisticRef2<E>  implements
 	
 	@SuppressWarnings("unused")
 	private void debugState(String label) {
-//		StateDebuger.debug(
+		//StateDebuger.debug(
 //				label, 35, 10, 
 //				this, 
 //				isInTransaction.get(), 

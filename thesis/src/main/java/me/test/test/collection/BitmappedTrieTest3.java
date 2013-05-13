@@ -1,9 +1,11 @@
 package me.test.test.collection;
 
-import me.test.util.BitmappedTrieOld;
+import me.test.util.BitmappedTrie;
 import me.test.util.FastArrayList;
 
 public final class BitmappedTrieTest3<E> implements CollectionTest<E>  {
+	
+	private BitmappedTrie<E> testList;
 
 	public String groupName() {
 		return "BitmappedTrie3";
@@ -12,17 +14,20 @@ public final class BitmappedTrieTest3<E> implements CollectionTest<E>  {
 	
 	public void prepareTestEmpty() {
 
+		testList = new BitmappedTrie<E>();
 		
 	}
 	
 	public void prepareTest(java.util.List<E> data) {
 	
-		throw new UnsupportedOperationException();
+		
+		testList = new BitmappedTrie<E>(data);
+		
 		
 	}
 	
 	public void normalFill(int testSize) {
-		BitmappedTrieOld<Integer> newList = new BitmappedTrieOld<Integer>();
+		BitmappedTrie<Integer> newList = new BitmappedTrie<Integer>();
 		
 		for (int i=0; i < testSize; i++) {
 			
@@ -40,7 +45,7 @@ public final class BitmappedTrieTest3<E> implements CollectionTest<E>  {
 		}
 		
 		@SuppressWarnings("unused")
-		BitmappedTrieOld<Integer> newList = new BitmappedTrieOld<Integer>(list);
+		BitmappedTrie<Integer> newList = new BitmappedTrie<Integer>(list);
 	}
 
 	public void addElement(E element) {
@@ -49,7 +54,8 @@ public final class BitmappedTrieTest3<E> implements CollectionTest<E>  {
 
 	public E readElement(int index) {
 		
-		throw new UnsupportedOperationException();
+		return testList.getElement(index);
+		
 	}
 
 	public void calculateSize() {
@@ -74,6 +80,10 @@ public final class BitmappedTrieTest3<E> implements CollectionTest<E>  {
 
 	public void readSafeLimit(int testSize) {
 		
+	}
+
+	public void changeElement(int index, E element) {
+		throw new UnsupportedOperationException();
 	}
 	
 }

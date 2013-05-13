@@ -1,52 +1,48 @@
 package me.test.test.collection;
 
-import me.test.util.FastArrayList;
+import me.test.util.BitmappedTrieBasic;
 
-public final class FastArrayListTest<E> implements CollectionTest<E>  {
-
-	private FastArrayList<E> testList;
+public final class BitmappedTrieTestO2<E> implements CollectionTest<E>  {
 	
+	private BitmappedTrieBasic<E> testList;
+
 	public String groupName() {
-		return "FastArrayList";
+		return "BitmappedTrie2";
 	}
 	
 	
 	public void prepareTestEmpty() {
 
-		testList = new FastArrayList<E>();
-	
+		testList = new BitmappedTrieBasic<E>();
+		
 	}
 	
 	public void prepareTest(java.util.List<E> data) {
 	
-		testList = new FastArrayList<E>();
+		testList = new BitmappedTrieBasic<E>();
 		
 		for (E item : data) {
 			testList.addElement(item);
 		}
+		
 	}
 	
 	public void normalFill(int testSize) {
-		FastArrayList<Integer> list = new FastArrayList<Integer>();
+		BitmappedTrieBasic<Integer> newList = new BitmappedTrieBasic<Integer>();
 		
 		for (int i=0; i < testSize; i++) {
 			
-			list.addElement(Integer.valueOf(0));
+			newList = newList.addElement(Integer.valueOf(0));
 		}
+		
 	}
 
 	public void fastFill(int testSize) {
-		FastArrayList<Integer> list = new FastArrayList<Integer>();
-		
-		for (int i=0; i < testSize; i++) {
-			
-			list.addElement(Integer.valueOf(0));
-		}
-	
+		throw new UnsupportedOperationException();
 	}
 
 	public void addElement(E element) {
-		testList.addElement(element);
+		throw new UnsupportedOperationException();
 	}
 
 	public E readElement(int index) {
@@ -55,8 +51,7 @@ public final class FastArrayListTest<E> implements CollectionTest<E>  {
 	}
 
 	public void calculateSize() {
-		@SuppressWarnings("unused")
-		int i = testList.size();
+		throw new UnsupportedOperationException();
 	}
 
 	public Iterable<E> iterable(int testSize) {
@@ -80,6 +75,6 @@ public final class FastArrayListTest<E> implements CollectionTest<E>  {
 	}
 
 	public void changeElement(int index, E element) {
-		testList.setElement(index, element);
+		throw new UnsupportedOperationException();
 	}
 }

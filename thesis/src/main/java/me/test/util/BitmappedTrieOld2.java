@@ -352,7 +352,7 @@ public class BitmappedTrieOld2<E> {
 	}
 	
 	public int size() {
-		return index < 0 ? 0 : index;
+		return index < 0 ? 0 : index + 1;
 	}
 	
 	

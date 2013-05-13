@@ -4,6 +4,8 @@ import me.test.util.ImmutableArrayList;
 
 public final class ImmutableArrayListTest<E> implements CollectionTest<E>  {
 
+	private ImmutableArrayList<E> testList;
+	
 	public String groupName() {
 		return "ImmutableArrayList";
 	}
@@ -16,8 +18,11 @@ public final class ImmutableArrayListTest<E> implements CollectionTest<E>  {
 	
 	public void prepareTest(java.util.List<E> data) {
 	
-		throw new UnsupportedOperationException();
+		testList = new ImmutableArrayList<E>();
 		
+		for (E item : data) {
+			testList.addElement(item);
+		}
 	}
 	
 	public void normalFill(int testSize) {
@@ -45,7 +50,7 @@ public final class ImmutableArrayListTest<E> implements CollectionTest<E>  {
 
 	public E readElement(int index) {
 		
-		throw new UnsupportedOperationException();
+		return testList.getElement(index);
 	}
 
 	public void calculateSize() {
@@ -71,5 +76,8 @@ public final class ImmutableArrayListTest<E> implements CollectionTest<E>  {
 	public void readSafeLimit(int testSize) {
 		
 	}
-	
+
+	public void changeElement(int index, E element) {
+		throw new UnsupportedOperationException();
+	}
 }

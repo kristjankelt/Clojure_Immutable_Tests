@@ -100,4 +100,8 @@ public final class TreePVectorTest2<E> implements CollectionTest<E>  {
 	public void readSafeLimit(int testSize) {
 		
 	}
+	
+	public void changeElement(int index, E element) {
+		throw new UnsupportedOperationException();
+	}
 }

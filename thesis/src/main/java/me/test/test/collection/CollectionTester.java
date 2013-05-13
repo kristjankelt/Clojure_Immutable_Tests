@@ -12,6 +12,7 @@ import me.test.test.TestContainer;
 import me.test.test.TestItem;
 
 public final class CollectionTester {
+	private long sum;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Set<TestContainer> getTests(final Class<? extends CollectionTest> collectionTest) {
@@ -23,18 +24,19 @@ public final class CollectionTester {
 					// GC will be "happy"
 					String groupName = collectionTest.newInstance().groupName();
 					
-					add(new TestItem("sequentalFill", groupName, "collection",  sequentalFill((CollectionTest<Integer>) collectionTest.newInstance())));
-					add(new TestItem("sequentalFastFill", groupName, "collection", sequentalFastFill((CollectionTest<Integer>) collectionTest.newInstance())));
-					add(new TestItem("sequentalHardFill", groupName, "collection", sequentalHardFill((CollectionTest<BigInteger>) collectionTest.newInstance())));
-					add(new TestItem("sequentalLightFill", groupName, "collection", sequentalLightFill((CollectionTest<Integer>) collectionTest.newInstance())));				
+					add(new TestItem("sequentialFill", groupName, "collection",  sequentialFill((CollectionTest<Integer>) collectionTest.newInstance())));
+					add(new TestItem("sequentialFastFill", groupName, "collection", sequentialFastFill((CollectionTest<Integer>) collectionTest.newInstance())));
 					add(new TestItem("randomRead", groupName, "collection", randomRead((CollectionTest<Integer>) collectionTest.newInstance())));
-					add(new TestItem("sequentalRead", groupName, "collection", sequentalRead((CollectionTest<Integer>) collectionTest.newInstance())));
-					add(new TestItem("reverseSequentalRead", groupName, "collection", reverseSequentalRead((CollectionTest<Integer>) collectionTest.newInstance())));
+					add(new TestItem("randomUpdate", groupName, "collection", randomUpdate((CollectionTest<Integer>) collectionTest.newInstance())));
+					add(new TestItem("sequentialRead", groupName, "collection", sequentialRead((CollectionTest<Integer>) collectionTest.newInstance())));
+					add(new TestItem("reverseSequentialRead", groupName, "collection", reverseSequentialRead((CollectionTest<Integer>) collectionTest.newInstance())));
+					
 					add(new TestItem("calculateSize", groupName, "collection", calculateSize((CollectionTest<Integer>) collectionTest.newInstance())));
 					add(new TestItem("createCopy", groupName, "collection", createCopy((CollectionTest<Integer>) collectionTest.newInstance())));
+				
+					add(new TestItem("sequentialHardFill", groupName, "collection", sequentialHardFill((CollectionTest<BigInteger>) collectionTest.newInstance())));
+					add(new TestItem("sequentialLightFill", groupName, "collection", sequentialLightFill((CollectionTest<Integer>) collectionTest.newInstance())));				
 					add(new TestItem("smallCalculation", groupName, "collection", smallCalculation((CollectionTest<Integer>) collectionTest.newInstance())));
-					
-					
 				}
 			});
 		} 
@@ -47,7 +49,8 @@ public final class CollectionTester {
 		
 	}
 
-	private Test sequentalFill(final CollectionTest<Integer> collectionTest) {
+	
+	private Test sequentialFill(final CollectionTest<Integer> collectionTest) {
 		return new Test() {
 			
 			public void prepare(final int testSize) {
@@ -61,7 +64,7 @@ public final class CollectionTester {
 		};
 	}
 	
-	private Test sequentalLightFill(final CollectionTest<Integer> collectionTest) {
+	private Test sequentialLightFill(final CollectionTest<Integer> collectionTest) {
 		return new Test() {
 			
 			public void prepare(final int testSize) {
@@ -81,7 +84,7 @@ public final class CollectionTester {
 		};
 	}
 	
-	private Test sequentalHardFill(final CollectionTest<BigInteger> collectionTest) {
+	private Test sequentialHardFill(final CollectionTest<BigInteger> collectionTest) {
 		return new Test() {
 			
 			public void prepare(final int testSize) {
@@ -99,7 +102,7 @@ public final class CollectionTester {
 		};
 	}
 	
-	private Test sequentalFastFill(final CollectionTest<Integer> collectionTest) {
+	private Test sequentialFastFill(final CollectionTest<Integer> collectionTest) {
 		return new Test() {
 			
 			public void prepare(final int testSize) {}
@@ -118,18 +121,42 @@ public final class CollectionTester {
 				collectionTest.readSafeLimit(testSize);
 				
 				collectionTest.prepareTest(createIntegerList(testSize));
+				
+				
 			}
 
 			public void run(final int testSize) {
+				sum = 0;
+				
 				for (int i=0; i < testSize; i++) {
-					collectionTest.readElement(i);
+					sum = sum + collectionTest.readElement(i).intValue();
 				}
+				  
 			}
 			
 		};
 	}
 	
-	private Test sequentalRead(final CollectionTest<Integer> collectionTest) {
+	private Test randomUpdate(final CollectionTest<Integer> collectionTest) {
+		return new Test() {
+			
+			public void prepare(final int testSize) {
+				collectionTest.readSafeLimit(testSize);
+				
+				collectionTest.prepareTest(createIntegerList(testSize));
+			}
+
+			public void run(final int testSize) {
+				for (int i=0; i < testSize; i++) {
+					collectionTest.changeElement(i, Integer.valueOf(1));
+				}
+			}
+			
+		};
+	}
+
+	
+	private Test sequentialRead(final CollectionTest<Integer> collectionTest) {
 		return new Test() {
 			
 			public void prepare(final int testSize) {
@@ -146,7 +173,7 @@ public final class CollectionTester {
 		};
 	}
 	
-	private Test reverseSequentalRead(final CollectionTest<Integer> collectionTest) {
+	private Test reverseSequentialRead(final CollectionTest<Integer> collectionTest) {
 		return new Test() {
 			
 			public void prepare(final int testSize) {
@@ -217,7 +244,7 @@ public final class CollectionTester {
 		Integer[] fill = new Integer[testSize];
 		
 		for (int i=0; i < testSize; i++) {
-			fill[i] = Integer.valueOf(0);
+			fill[i] = Integer.valueOf(i);
 		}
 		return Arrays.asList(fill);
 	}

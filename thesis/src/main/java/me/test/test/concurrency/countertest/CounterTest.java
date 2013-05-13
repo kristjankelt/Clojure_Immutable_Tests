@@ -8,4 +8,6 @@ public interface CounterTest {
 
 	public Long getValue(final boolean useCounterCounter);
 	
+	public Long longCalculation(final int wastedCycles);
+	
 }

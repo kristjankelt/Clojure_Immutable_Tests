@@ -121,9 +121,7 @@ public class OptimisticTransactionManager {
 		
 		registeredRefs.get().put(ref, ref);
 		
-//		if (!registeredRefs.get().contains(ref)) {
-//			registeredRefs.get().add(ref);
-//		}
+
 	}
 	
 	public static boolean isInTransaction() {

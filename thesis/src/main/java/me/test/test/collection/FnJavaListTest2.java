@@ -87,5 +87,8 @@ public final class FnJavaListTest2<E> implements CollectionTest<E>  {
 			throw new TooBigTestSizeException();
 		}
 	}
-	
+
+	public void changeElement(int index, E element) {
+		throw new UnsupportedOperationException();
+	}
 }
